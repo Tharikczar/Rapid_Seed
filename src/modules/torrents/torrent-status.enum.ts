@@ -1,0 +1,7 @@
+export enum TorrentStatus {
+  PENDING = 'PENDING',
+  QUEUED = 'QUEUED',
+  DOWNLOADING = 'DOWNLOADING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
