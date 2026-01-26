@@ -1,42 +1,32 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TorrentStatus } from './torrent-status.enum';
 import { TorrentQueue } from './queue/torrent.queue';
+import { Torrent } from './schema/torrent.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class TorrentsService {
-  constructor(private torrentQueue: TorrentQueue) {}
-  private torrents = new Map<
-    string,
-    { id: string; magnet: string; createdAt: Date; status: string }
-  >();
+  constructor(
+    @InjectModel(Torrent.name) private torrentModel: Model<Torrent>,
+    private torrentQueue: TorrentQueue,
+  ) {}
   //create a new torrent
-  createTorrent(magnet: string) {
-    if (!magnet.startsWith('magnet:')) {
-      throw new BadRequestException('Invalid magnet link');
-    }
-    const torrentId = randomUUID();
-    const newTorrent = {
-      id: torrentId,
+  async createTorrent(magnet: string) {
+    const torrent = await this.torrentModel.create({
       magnet,
-      createdAt: new Date(),
       status: TorrentStatus.PENDING,
-    };
-    this.torrents.set(torrentId, newTorrent);
-    this.torrentQueue.enqueueDownload(torrentId);
+    });
+    this.torrentQueue.enqueueDownload(torrent.id);
 
     return {
-      torrentId,
-      status: newTorrent.status,
+      torrentId: torrent.id,
+      status: torrent.status,
     };
   }
   //get torrent status
-  getTorrentStatus(torrentId: string) {
-    const torrent = this.torrents.get(torrentId);
+  async getTorrentStatus(torrentId: string) {
+    const torrent = await this.torrentModel.findById(torrentId);
     if (!torrent) {
       throw new NotFoundException('Torrent not found');
     }
