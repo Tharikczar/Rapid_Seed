@@ -13,6 +13,14 @@ export class Torrent extends Document {
     default: TorrentStatus.PENDING,
   })
   status: TorrentStatus;
+
+  @Prop({ type: Number, default: 0 })
+  progress: number;
+
+  @Prop({ type: Number, default: 0 })
+  attempts: number;
+  @Prop({ type: String, default: null })
+  error: string | null;
 }
 
 export const TorrentSchema = SchemaFactory.createForClass(Torrent);

@@ -1,15 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { TorrentStatus } from './torrent-status.enum';
-import { TorrentQueue } from './queue/torrent.queue';
 import { Torrent } from './schema/torrent.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Queue } from 'bullmq';
+import { TORRENT_QUEUE } from './queue/torrent-queue.provider';
 
 @Injectable()
 export class TorrentsService {
   constructor(
     @InjectModel(Torrent.name) private torrentModel: Model<Torrent>,
-    private torrentQueue: TorrentQueue,
+    @Inject(TORRENT_QUEUE)
+    private readonly torrentQueue: Queue,
   ) {}
   //create a new torrent
   async createTorrent(magnet: string) {
@@ -17,7 +19,16 @@ export class TorrentsService {
       magnet,
       status: TorrentStatus.PENDING,
     });
-    this.torrentQueue.enqueueDownload(torrent.id);
+    await this.torrentQueue.add(
+      'download-torrent',
+      { torrentId: torrent.id },
+      {
+        attempts: 5,
+        backoff: { type: 'exponential', delay: 60000 },
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
 
     return {
       torrentId: torrent.id,
@@ -33,6 +44,7 @@ export class TorrentsService {
     return {
       torrentId: torrent.id,
       status: torrent.status,
+      progress: torrent.progress,
     };
   }
 }

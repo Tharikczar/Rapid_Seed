@@ -1,13 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Queue } from 'bullmq';
 
-@Injectable()
-export class TorrentQueue {
-  enqueueDownload(torrentId: string) {
-    /**
-     * In real implementation:
-     * - This will push a job to BullMQ / Redis
-     * - Worker will pick it up asynchronously
-     */
-    console.log(`[QUEUE] Enqueued download job for torrent ${torrentId}`);
-  }
-}
+export const TorrentQueue = new Queue('torrent-queue', {
+  connection: {
+    url: process.env.REDIS_URL,
+  },
+});
