@@ -47,7 +47,7 @@ export class TorrentWorker {
             attempts: job.attemptsMade + 1,
           });
 
-          // 🔴 IMPORTANT: rethrow error so BullMQ retries
+          //  IMPORTANT: rethrow error so BullMQ retries (important for backoff strategy)
           throw err;
         }
       },
