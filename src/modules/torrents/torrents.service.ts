@@ -25,8 +25,8 @@ export class TorrentsService {
       {
         attempts: 5,
         backoff: { type: 'exponential', delay: 60000 },
-        removeOnComplete: true,
-        removeOnFail: true,
+        removeOnComplete: 100,
+        removeOnFail: 500,
       },
     );
 
