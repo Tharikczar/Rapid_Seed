@@ -11,5 +11,5 @@ export class CreateTorrentDto {
   @Matches(/^magnet:\?/, {
     message: 'Magnet link must start with magnet:?',
   })
-  magnet: string;
+  magnet!: string;
 }

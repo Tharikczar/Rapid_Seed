@@ -5,22 +5,22 @@ import { TorrentStatus } from '../torrent-status.enum';
 @Schema({ timestamps: true })
 export class Torrent extends Document {
   @Prop({ required: true })
-  magnet: string;
+  magnet!: string;
 
   @Prop({
     type: String,
     enum: TorrentStatus,
     default: TorrentStatus.PENDING,
   })
-  status: TorrentStatus;
+  status!: TorrentStatus;
 
   @Prop({ type: Number, default: 0 })
-  progress: number;
+  progress!: number;
 
   @Prop({ type: Number, default: 0 })
-  attempts: number;
+  attempts!: number;
   @Prop({ type: String, default: null })
-  error: string | null;
+  error!: string | null;
 }
 
 export const TorrentSchema = SchemaFactory.createForClass(Torrent);
