@@ -14,7 +14,8 @@ Built to demonstrate real-world backend engineering: async job queues, cloud sto
 
 ## ✨ Features
 
-- 🧲 **Add torrents via magnet link or .torrent file**
+- 🧲 **Add torrents via magnet link or .torrent file
+**
 - ☁️ **Cloud storage** — files stored on Cloudflare R2 (S3-compatible)
 - 📡 **Real-time progress** — live download updates via Server-Sent Events (SSE)
 - 🎬 **HTTP range streaming** — stream video files without full download
